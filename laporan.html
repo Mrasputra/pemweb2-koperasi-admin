@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rekap Bulanan — KSP Amanah Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="laporan">
+  <div class="app">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand"><div class="sidebar__title">KSP Amanah Digital</div></div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav__link" data-nav="dashboard">Dashboard</a>
+        <div class="nav__group is-open">
+          <button type="button" class="nav__group-toggle" aria-expanded="true">Laporan</button>
+          <div class="nav__sub"><a href="laporan.html" class="nav__sublink" data-nav="laporan">Rekap Bulanan</a></div>
+        </div>
+      </nav>
+    </aside>
+    <div class="main-wrap">
+      <header class="header">
+        <button type="button" class="header__menu-btn no-print" id="menuToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <nav class="breadcrumb"><a href="dashboard.html">KSP Amanah</a><span class="breadcrumb__sep">›</span><span class="breadcrumb__current">Rekap Bulanan</span></nav>
+        <div class="header__actions no-print">
+          <button type="button" class="btn btn--primary btn--sm" id="btnPrintLaporan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Cetak Laporan
+          </button>
+        </div>
+      </header>
+      <main class="content" id="laporanContent">
+        <div class="print-only" style="margin-bottom: 1rem;">
+          <h1 style="font-family: var(--font-heading);">KSP Amanah Digital</h1>
+          <p>Laporan Rekap Bulanan — <span id="laporanPeriodePrint"></span></p>
+        </div>
+        <div class="page-head no-print">
+          <div><h1 class="page-head__title">Rekap Bulanan</h1><div class="page-head__meta">Siap dicetak (Ctrl+P)</div></div>
+        </div>
+        <div class="kpi-grid" id="laporanKpi"></div>
+        <section class="glass-panel" style="padding: 1.25rem; margin-top: 1rem;">
+          <h2 class="chart-panel__title" style="margin-bottom: 1rem;">Ringkasan Anggota &amp; Portofolio</h2>
+          <table class="data-table" id="laporanSummaryTable">
+            <thead><tr><th>Indikator</th><th>Nilai</th><th>Keterangan</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </section>
+        <section class="glass-panel table-panel" style="margin-top: 1rem;">
+          <div class="chart-panel__head" style="padding: 1rem 1.15rem 0;"><h2 class="chart-panel__title">Daftar Pinjaman Aktif</h2></div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>Anggota</th><th>Plafon</th><th>Sisa</th><th>Status</th></tr></thead>
+              <tbody id="laporanPinjamanBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+      <footer class="page-footer"><span>© 2024 KSP Amanah Digital</span></footer>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

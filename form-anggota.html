@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Anggota — KSP Amanah Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="anggota">
+  <div class="app">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div><div class="sidebar__title">KSP Amanah Digital</div></div>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav__link" data-nav="dashboard">Dashboard</a>
+        <div class="nav__group is-open">
+          <button type="button" class="nav__group-toggle" aria-expanded="true">Data Master</button>
+          <div class="nav__sub"><a href="anggota.html" class="nav__sublink is-active" data-nav="anggota">Data Anggota</a></div>
+        </div>
+      </nav>
+    </aside>
+    <div class="main-wrap">
+      <header class="header">
+        <button type="button" class="header__menu-btn" id="menuToggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <nav class="breadcrumb"><a href="dashboard.html">KSP Amanah</a><span class="breadcrumb__sep">›</span><a href="anggota.html">Data Anggota</a><span class="breadcrumb__sep">›</span><span class="breadcrumb__current" id="formBreadcrumb">Tambah Anggota</span></nav>
+      </header>
+      <main class="content">
+        <div class="page-head">
+          <div>
+            <h1 class="page-head__title" id="formPageTitle">Tambah Anggota</h1>
+            <div class="page-head__meta">Lengkapi data anggota koperasi</div>
+          </div>
+        </div>
+        <section class="glass-panel form-panel">
+          <form id="formAnggota" novalidate>
+            <input type="hidden" id="anggotaId" name="id">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="no_anggota">No. Anggota <span>*</span></label>
+                <input class="form-input" type="text" id="no_anggota" name="no_anggota" placeholder="AG-0850" required>
+                <span class="form-error" data-error="no_anggota"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="nama">Nama Lengkap <span>*</span></label>
+                <input class="form-input" type="text" id="nama" name="nama" placeholder="Min. 3 karakter" required>
+                <span class="form-error" data-error="nama"></span>
+              </div>
+              <div class="form-group form-group--full">
+                <label class="form-label" for="alamat">Alamat Domisili <span>*</span></label>
+                <textarea class="form-textarea" id="alamat" name="alamat" rows="3" placeholder="Min. 10 karakter" required></textarea>
+                <span class="form-error" data-error="alamat"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="no_hp">No. Handphone <span>*</span></label>
+                <input class="form-input" type="tel" id="no_hp" name="no_hp" placeholder="08xxxxxxxxxx" required>
+                <span class="form-error" data-error="no_hp"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="tgl_gabung">Tanggal Bergabung <span>*</span></label>
+                <input class="form-input" type="date" id="tgl_gabung" name="tgl_gabung" required>
+                <span class="form-error" data-error="tgl_gabung"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="status">Status <span>*</span></label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="">Pilih status</option>
+                  <option value="Aktif">Aktif</option>
+                  <option value="Nonaktif">Nonaktif</option>
+                </select>
+                <span class="form-error" data-error="status"></span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <a href="anggota.html" class="btn btn--ghost">Batal</a>
+              <button type="submit" class="btn btn--primary">Simpan Data</button>
+            </div>
+          </form>
+        </section>
+      </main>
+      <footer class="page-footer"><span>© 2024 KSP Amanah Digital</span></footer>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="script.js"></script>
+</body>
+</html>

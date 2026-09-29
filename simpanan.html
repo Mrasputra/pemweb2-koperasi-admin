@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simpanan — KSP Amanah Digital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="simpanan">
+  <div class="app">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand"><div class="sidebar__title">KSP Amanah Digital</div></div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav__link" data-nav="dashboard">Dashboard</a>
+        <div class="nav__group is-open">
+          <button type="button" class="nav__group-toggle" aria-expanded="true">Transaksi</button>
+          <div class="nav__sub"><a href="simpanan.html" class="nav__sublink" data-nav="simpanan">Simpanan</a><a href="pinjaman.html" class="nav__sublink" data-nav="pinjaman">Pinjaman</a></div>
+        </div>
+      </nav>
+    </aside>
+    <div class="main-wrap">
+      <header class="header">
+        <button type="button" class="header__menu-btn" id="menuToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <nav class="breadcrumb"><a href="dashboard.html">KSP Amanah</a><span class="breadcrumb__sep">›</span><span class="breadcrumb__current">Transaksi Simpanan</span></nav>
+      </header>
+      <main class="content">
+        <div class="page-head">
+          <div><h1 class="page-head__title">Transaksi Simpanan</h1></div>
+        </div>
+        <section class="glass-panel table-panel">
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Anggota</th>
+                  <th>Jenis</th>
+                  <th>Jumlah</th>
+                  <th>Tanggal</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="simpananTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+      <footer class="page-footer"><span>© 2024 KSP Amanah Digital</span></footer>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

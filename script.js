@@ -213,10 +213,67 @@
     });
   }
 
-  function nextAnggotaId(list) {
-    return list.reduce(function (max, a) {
-      return Math.max(max, a.id);
+  function nextId(list) {
+    return list.reduce(function (max, item) {
+      return Math.max(max, item.id || 0);
     }, 0) + 1;
+  }
+
+  function nextAnggotaId(list) {
+    return nextId(list);
+  }
+
+  function todayISO() {
+    var d = new Date();
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + month + '-' + day;
+  }
+
+  function parseNominal(value) {
+    return Number(String(value || '').replace(/[^\d]/g, '')) || 0;
+  }
+
+  function bindRupiahInput(el) {
+    if (!el) return;
+    el.addEventListener('input', function () {
+      var n = parseNominal(el.value);
+      el.value = n ? n.toLocaleString('id-ID') : '';
+    });
+  }
+
+  function fillAktifAnggotaSelect(selectEl) {
+    if (!selectEl) return;
+    var options = getData(STORAGE_KEYS.anggota)
+      .filter(function (a) {
+        return a.status === 'Aktif';
+      })
+      .map(function (a) {
+        return '<option value="' + a.id + '">' + a.nama + ' (' + a.no_anggota + ')</option>';
+      })
+      .join('');
+    selectEl.innerHTML = '<option value="">Pilih anggota aktif</option>' + options;
+  }
+
+  function openFormModal(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('is-open');
+    el.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeFormModal(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('is-open');
+    el.setAttribute('aria-hidden', 'true');
+  }
+
+  function statusSelectClass(status) {
+    if (status === 'Lancar') return 'status-select--cyan';
+    if (status === 'Menunggak') return 'status-select--danger';
+    if (status === 'Lunas') return 'status-select--success';
+    return '';
   }
 
   function statusBadge(status) {
@@ -728,11 +785,20 @@
   }
 
   /* ——— Simpanan & Pinjaman tables ——— */
-  function initSimpananPage() {
+  function renderSimpananTable() {
     var tbody = document.getElementById('simpananTableBody');
     if (!tbody) return;
     var anggota = getData(STORAGE_KEYS.anggota);
-    tbody.innerHTML = getData(STORAGE_KEYS.simpanan)
+    var rows = getData(STORAGE_KEYS.simpanan);
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6">Belum ada transaksi simpanan.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows
+      .slice()
+      .sort(function (a, b) {
+        return new Date(b.tanggal) - new Date(a.tanggal);
+      })
       .map(function (s) {
         var ag = anggota.find(function (a) {
           return a.id === s.id_anggota;
@@ -758,11 +824,89 @@
       .join('');
   }
 
-  function initPinjamanPage() {
+  function initSimpananPage() {
+    var tbody = document.getElementById('simpananTableBody');
+    if (!tbody) return;
+
+    renderSimpananTable();
+    fillAktifAnggotaSelect(document.getElementById('simpanan_id_anggota'));
+    bindRupiahInput(document.getElementById('simpanan_jumlah'));
+
+    document.getElementById('btnTambahSimpanan')?.addEventListener('click', function () {
+      var form = document.getElementById('formSimpanan');
+      form?.reset();
+      ['simpanan_id_anggota', 'simpanan_jenis', 'simpanan_jumlah', 'simpanan_tanggal'].forEach(function (name) {
+        setFieldError(name, '');
+      });
+      fillAktifAnggotaSelect(document.getElementById('simpanan_id_anggota'));
+      var tgl = document.getElementById('simpanan_tanggal');
+      if (tgl) tgl.value = todayISO();
+      openFormModal('formModalSimpanan');
+    });
+
+    document.getElementById('formModalSimpananCancel')?.addEventListener('click', function () {
+      closeFormModal('formModalSimpanan');
+    });
+    document.getElementById('formModalSimpanan')?.addEventListener('click', function (e) {
+      if (e.target.id === 'formModalSimpanan') closeFormModal('formModalSimpanan');
+    });
+
+    document.getElementById('formSimpanan')?.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var idAnggota = document.getElementById('simpanan_id_anggota').value;
+      var jenis = document.getElementById('simpanan_jenis').value;
+      var jumlah = parseNominal(document.getElementById('simpanan_jumlah').value);
+      var tanggal = document.getElementById('simpanan_tanggal').value;
+      var valid = true;
+
+      setFieldError('simpanan_id_anggota', '');
+      setFieldError('simpanan_jenis', '');
+      setFieldError('simpanan_jumlah', '');
+      setFieldError('simpanan_tanggal', '');
+
+      if (!idAnggota) {
+        setFieldError('simpanan_id_anggota', 'Anggota wajib dipilih.');
+        valid = false;
+      }
+      if (!jenis) {
+        setFieldError('simpanan_jenis', 'Jenis simpanan wajib dipilih.');
+        valid = false;
+      }
+      if (jumlah <= 0) {
+        setFieldError('simpanan_jumlah', 'Jumlah harus lebih dari 0.');
+        valid = false;
+      }
+      if (!tanggal) {
+        setFieldError('simpanan_tanggal', 'Tanggal wajib diisi.');
+        valid = false;
+      }
+      if (!valid) return;
+
+      var list = getData(STORAGE_KEYS.simpanan);
+      list.push({
+        id: nextId(list),
+        id_anggota: Number(idAnggota),
+        jenis: jenis,
+        jumlah: jumlah,
+        tanggal: tanggal + 'T09:00:00',
+      });
+      setData(STORAGE_KEYS.simpanan, list);
+      closeFormModal('formModalSimpanan');
+      renderSimpananTable();
+      showToast('Simpanan berhasil dicatat.', 'success');
+    });
+  }
+
+  function renderPinjamanTable() {
     var tbody = document.getElementById('pinjamanTableBody');
     if (!tbody) return;
     var anggota = getData(STORAGE_KEYS.anggota);
-    tbody.innerHTML = getData(STORAGE_KEYS.pinjaman)
+    var rows = getData(STORAGE_KEYS.pinjaman);
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7">Belum ada transaksi pinjaman.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows
       .map(function (p) {
         var ag = anggota.find(function (a) {
           return a.id === p.id_anggota;
@@ -781,11 +925,120 @@
           '</td><td>' +
           formatRupiah(p.sisa_angsuran) +
           '</td><td>' +
-          statusBadge(p.status) +
-          '</td></tr>'
+          '<select class="status-select ' +
+          statusSelectClass(p.status) +
+          '" data-pinjaman-id="' +
+          p.id +
+          '" aria-label="Ubah status pinjaman">' +
+          ['Lancar', 'Menunggak', 'Lunas']
+            .map(function (st) {
+              return '<option value="' + st + '"' + (st === p.status ? ' selected' : '') + '>' + st + '</option>';
+            })
+            .join('') +
+          '</select></td></tr>'
         );
       })
       .join('');
+  }
+
+  function initPinjamanPage() {
+    var tbody = document.getElementById('pinjamanTableBody');
+    if (!tbody) return;
+
+    renderPinjamanTable();
+    fillAktifAnggotaSelect(document.getElementById('pinjaman_id_anggota'));
+    bindRupiahInput(document.getElementById('pinjaman_jumlah'));
+
+    document.getElementById('pinjaman_jumlah')?.addEventListener('input', function () {
+      var sisa = document.getElementById('pinjaman_sisa');
+      var n = parseNominal(this.value);
+      if (sisa) sisa.value = n ? formatRupiah(n) : '';
+    });
+
+    document.getElementById('btnAjukanPinjaman')?.addEventListener('click', function () {
+      var form = document.getElementById('formPinjaman');
+      form?.reset();
+      ['pinjaman_id_anggota', 'pinjaman_jumlah', 'pinjaman_tenor', 'pinjaman_tgl'].forEach(function (name) {
+        setFieldError(name, '');
+      });
+      fillAktifAnggotaSelect(document.getElementById('pinjaman_id_anggota'));
+      var tgl = document.getElementById('pinjaman_tgl');
+      if (tgl) tgl.value = todayISO();
+      var sisa = document.getElementById('pinjaman_sisa');
+      if (sisa) sisa.value = '';
+      openFormModal('formModalPinjaman');
+    });
+
+    document.getElementById('formModalPinjamanCancel')?.addEventListener('click', function () {
+      closeFormModal('formModalPinjaman');
+    });
+    document.getElementById('formModalPinjaman')?.addEventListener('click', function (e) {
+      if (e.target.id === 'formModalPinjaman') closeFormModal('formModalPinjaman');
+    });
+
+    document.getElementById('formPinjaman')?.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var idAnggota = document.getElementById('pinjaman_id_anggota').value;
+      var jumlah = parseNominal(document.getElementById('pinjaman_jumlah').value);
+      var tenor = Number(document.getElementById('pinjaman_tenor').value);
+      var tgl = document.getElementById('pinjaman_tgl').value;
+      var valid = true;
+
+      setFieldError('pinjaman_id_anggota', '');
+      setFieldError('pinjaman_jumlah', '');
+      setFieldError('pinjaman_tenor', '');
+      setFieldError('pinjaman_tgl', '');
+
+      if (!idAnggota) {
+        setFieldError('pinjaman_id_anggota', 'Anggota wajib dipilih.');
+        valid = false;
+      }
+      if (jumlah <= 0) {
+        setFieldError('pinjaman_jumlah', 'Jumlah pinjaman harus lebih dari 0.');
+        valid = false;
+      }
+      if (!tenor || tenor < 1) {
+        setFieldError('pinjaman_tenor', 'Tenor minimal 1 bulan.');
+        valid = false;
+      }
+      if (!tgl) {
+        setFieldError('pinjaman_tgl', 'Tanggal pinjam wajib diisi.');
+        valid = false;
+      }
+      if (!valid) return;
+
+      var list = getData(STORAGE_KEYS.pinjaman);
+      list.push({
+        id: nextId(list),
+        id_anggota: Number(idAnggota),
+        jumlah_pinjam: jumlah,
+        tenor: tenor,
+        tgl_pinjam: tgl,
+        sisa_angsuran: jumlah,
+        status: 'Lancar',
+      });
+      setData(STORAGE_KEYS.pinjaman, list);
+      closeFormModal('formModalPinjaman');
+      renderPinjamanTable();
+      showToast('Pengajuan pinjaman berhasil dicatat.', 'success');
+    });
+
+    tbody.addEventListener('change', function (e) {
+      var select = e.target.closest('[data-pinjaman-id]');
+      if (!select) return;
+      var id = Number(select.getAttribute('data-pinjaman-id'));
+      var status = select.value;
+      var list = getData(STORAGE_KEYS.pinjaman);
+      var idx = list.findIndex(function (p) {
+        return p.id === id;
+      });
+      if (idx < 0) return;
+      list[idx].status = status;
+      if (status === 'Lunas') list[idx].sisa_angsuran = 0;
+      setData(STORAGE_KEYS.pinjaman, list);
+      renderPinjamanTable();
+      showToast('Status pinjaman berhasil diperbarui', 'success');
+    });
   }
 
   /* ——— Laporan ——— */

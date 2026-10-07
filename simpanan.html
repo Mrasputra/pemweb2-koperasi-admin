@@ -27,6 +27,12 @@
       <main class="content">
         <div class="page-head">
           <div><h1 class="page-head__title">Transaksi Simpanan</h1></div>
+          <div class="page-head__actions no-print">
+            <button type="button" class="btn btn--primary" id="btnTambahSimpanan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Tambah Simpanan
+            </button>
+          </div>
         </div>
         <section class="glass-panel table-panel">
           <div class="table-scroll">
@@ -49,6 +55,47 @@
       <footer class="page-footer"><span>© 2024 KSP Amanah Digital</span></footer>
     </div>
   </div>
+
+  <div class="modal-backdrop" id="formModalSimpanan" role="dialog" aria-modal="true" aria-labelledby="formModalSimpananTitle" aria-hidden="true">
+    <div class="glass-panel modal modal--form">
+      <h2 class="modal__title" id="formModalSimpananTitle">Tambah Simpanan</h2>
+      <p class="modal__text">Catat setoran anggota ke kas koperasi.</p>
+      <form id="formSimpanan" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="simpanan_id_anggota">Anggota <span>*</span></label>
+          <select class="form-select" id="simpanan_id_anggota" name="simpanan_id_anggota" required>
+            <option value="">Pilih anggota aktif</option>
+          </select>
+          <span class="form-error" data-error="simpanan_id_anggota"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="simpanan_jenis">Jenis <span>*</span></label>
+          <select class="form-select" id="simpanan_jenis" name="simpanan_jenis" required>
+            <option value="">Pilih jenis</option>
+            <option value="Pokok">Pokok</option>
+            <option value="Wajib">Wajib</option>
+            <option value="Sukarela">Sukarela</option>
+          </select>
+          <span class="form-error" data-error="simpanan_jenis"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="simpanan_jumlah">Jumlah <span>*</span></label>
+          <input class="form-input" type="text" inputmode="numeric" id="simpanan_jumlah" name="simpanan_jumlah" placeholder="Contoh: 150.000" required>
+          <span class="form-error" data-error="simpanan_jumlah"></span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="simpanan_tanggal">Tanggal <span>*</span></label>
+          <input class="form-input" type="date" id="simpanan_tanggal" name="simpanan_tanggal" required>
+          <span class="form-error" data-error="simpanan_tanggal"></span>
+        </div>
+        <div class="modal__actions" style="margin-top: 0.5rem;">
+          <button type="button" class="btn btn--ghost btn--sm" id="formModalSimpananCancel">Batal</button>
+          <button type="submit" class="btn btn--primary btn--sm">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
   <script src="script.js"></script>
 </body>
 </html>
